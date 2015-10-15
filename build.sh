@@ -15,6 +15,6 @@ for DIR in ${SLIDES}; do
 done
 
 # Extra files
-cp Test/parametric_testcase.py ${BUILD_DIR}/
+cp 3_Test/parametric_testcase.py ${BUILD_DIR}/
 
 popd
