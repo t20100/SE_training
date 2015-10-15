@@ -14,4 +14,7 @@ for DIR in ${SLIDES}; do
     popd
 done
 
+# Extra files
+cp Test/parametric_testcase.py ${BUILD_DIR}/
+
 popd

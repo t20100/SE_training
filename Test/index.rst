@@ -17,12 +17,8 @@ Testing
 
 #. Introduction
 #. unittest
+#. Additional tools
 #. Continuous integration
-
-.. TODO:
-   - a word on doctest? + integration of doctest in tests
-   - check: http://docs.python-guide.org/en/latest/writing/tests/
-   - test data: generate input file or download not distributed !
 
 ------
 
@@ -78,33 +74,38 @@ Tests folder structure:
 
 - In a separate ``tests/`` folder.
 - In ``tests`` sub-packages in each Python package/sub-package,
-  so that tests remains close to the source code.
+  so that tests remain close to the source code.
   Tests are installed with the package and can be run from the installation.
+- A ``test_*.py`` for each module and script (an more if needed).
+- Consider separating tests that are long to run from the others.
 
 ------
 
 ::
 
   project/
-     |---- setup.py
-     |---- run_tests.py
-     |---- package/
-     |       |----- __init__.py
-     |       |----- *.py
-     |       |----- tests/
-     |       |        |--- __init__.py
-     |       |        |--- test_*.py
-     |       |
-     |       |----- subpackage/
-     |                   |----- __init__.py
-     |                   |----- *.py
-     |                   |----- tests/
-     |                            |--- __init__.py
-     |                            |--- test_*.py
-     |---- scripts/
-     |        |---- *
-     |---- tests/
-             |--- test_*.py
+      setup.py
+      run_tests.py
+      package/
+          __init__.py
+          module1.py
+          tests/
+              __init__.py
+              test_module1.py
+              subpackage/
+                  __init__.py
+                  module1.py
+                  module2.py
+                  tests/
+                      __init__.py
+                      test_module1.py
+                      test_module2.py
+      scripts/
+          my_script.py
+          my_other_script.py
+      tests/
+          test_my_script.py
+          test_my_other_script.py
 
 ------
 
@@ -115,12 +116,7 @@ Tests folder structure:
 Extra tools
 -----------
 
-Tools extending ``unittest`` to write and/or run tests:
-
-- `QTest <http://doc.qt.io/qt-5/qtest.html>`_
-- `nose <https://nose.readthedocs.org/>`_
-- `pytest <http://pytest.org/>`_
-- `tox <https://tox.readthedocs.org/>`_
+\ 
 
 ------
 
@@ -152,44 +148,42 @@ It needs to know the widget instance and hard code the position of mouse events.
 
 ------
 
-nose
-....
+Test coverage
+.............
 
-`nose <https://nose.readthedocs.org/>`_ extends ``unittest``:
+Using `coverage.py <https://coverage.readthedocs.org>`_ to gather coverage statistics while running the tests:
 
-- Test discovery mechanism.
-- Test generator (a way to support parametric tests).
-- Additionnal asserts (e.g., timed test).
-- Plugins:
+#. Install ``coverage.py`` package: ``pip install coverage``.
+#. Run the tests: ``python -m coverage run --source <package_dir> run_tests.py``
+#. Show report:
 
-  - Test coverage,
-  - Parallel testing,
-  - Profiling,
-  - Output results in XUnit-xml (for Jenkins).
-  - ...
+  - ``python -m coverage report``
+  - ``python -m coverage html``
 
-------
+::
 
-pytest
-......
-
-`pytest <http://pytest.org/>`_ testing tools:
-
-- Test discovery, Parameterized test, Asserts
-- Distribute tests, Test coverage, Fixtures, Output JUnit XML
-- Plugins
-- Supports nose, unittest and docstring tests
+  Name                                   Stmts   Miss  Cover
+  ----------------------------------------------------------
+  rounding/__init__                          5      1    80%
+  rounding/tests/__init__                   13      4    69%
+  rounding/tests/test_parametric_round      27      1    96%
+  rounding/tests/test_round                 23      1    96%
+  ----------------------------------------------------------
+  TOTAL                                     68      7    90%
 
 ------
 
-tox
-...
+Extra test tools
+................
 
-`tox <https://tox.readthedocs.org/>`_ automates testing of Python packages.
+Extending ``unittest``:
 
-It installs a package with different versions of Python and runs the tests for each environment.
-It uses `virtualenv <https://virtualenv.pypa.io/>`_ a tool to create isolated Python environment.
-Integrates with Jenkins.
+- `pytest <http://pytest.org/>`_
+- `nose <https://nose.readthedocs.org/>`_
+
+Running the tests on different Python environments:
+
+- `tox <https://tox.readthedocs.org/>`_ automates testing of Python packages
 
 ------
 

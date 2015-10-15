@@ -359,7 +359,7 @@ Exemple:
 
    # __init__.py or test_all.py
 
-   from . import test_round
+   from . import test_round  # or import test_round
    ...
 
    def suite():
@@ -434,31 +434,6 @@ Minimal run_tests.py:
 
    runner = unittest.TextTestRunner()
    runner.run(mymodule.tests.suite())
-
-------
-
-Test coverage
-.............
-
-Using `coverage.py <https://coverage.readthedocs.org>`_ to gather coverage statistics while running the tests:
-
-#. Install ``coverage.py`` package: ``pip install coverage``.
-#. Run the tests: ``python -m coverage run --source <package_dir> run_tests.py``
-#. Show report:
-
-  - ``python -m coverage report``
-  - ``python -m coverage html``
-
-::
-
-  Name                                   Stmts   Miss  Cover
-  ----------------------------------------------------------
-  rounding/__init__                          5      1    80%
-  rounding/tests/__init__                   13      4    69%
-  rounding/tests/test_parametric_round      27      1    96%
-  rounding/tests/test_round                 23      1    96%
-  ----------------------------------------------------------
-  TOTAL                                     68      7    90%
 
 ------
 
@@ -607,75 +582,15 @@ Limitation: Require Python >= 3.4
 
 ------
 
-Simple Parametric tests
-^^^^^^^^^^^^^^^^^^^^^^^
+Parametric tests for Python < 3.4
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Add a message to the assert to provide information on the failure.
+- Use extra tools.
+- Use a compatibility class providing the same API:
+  `parametric_testcase.py <parametric_testcase.py>`_
 
-.. code-block:: python
-
-   class TestBuiltInRound(unittest.TestCase):
-
-       HALFWAY_TESTS = ((0.5, 0), (1.5, 2), (2.5, 2))
-
-       def test_halfways(self):
-           for value, expected in self.HALFWAY_TESTS:
-               result = round(value)
-               msg = 'round(%s) -> %s != %s' % (value, result, expected) 
-               self.assertEqual(result, expected, msg)
-
-Advertise the failed test parameters.
-
-Limitation: Stop at the first failure.
-
-------
-
-Parametric tests
-^^^^^^^^^^^^^^^^
-
-Add a message to the assert to provide information on the failure.
-
-Add support of parameters through a specific class which uses ``unittest.TestSuite``.
-
-.. code-block:: python
-
-  class TestBuiltInRound(ParametricTestCase):
-
-      def test_halfways(self):
-          value, expected = self.param
-          result = round(value)
-          msg = 'round(%s) -> %s != %s' % (value, result, expected)
-          self.assertEqual(round(value), expected, msg)
-
-  HALFWAY_TESTS = ((0.5, 0), (1.5, 2), (2.5, 2))
-
-  testSuite = TestBuiltInRound.buildTestSuite(HALFWAY_TESTS)
-
-Run tests for all parameters and advertise which one has failed.
-
-------
-
-Supporting class:
-
-.. code-block:: python
-
-  class ParametricTestCase(unittest.TestCase):
-
-      def __init__(self, methodName='runTest', param=None):
-          super(ParametricTestCase, self).__init__(methodName)
-          self.param = param
-
-      @classmethod
-      def buildTestSuite(cls, params, methodNames=None):
-          if methodNames is None:
-              methodNames = unittest.TestLoader().getTestCaseNames(cls)
-
-          suite = unittest.TestSuite()
-          for name in methodNames:
-              suite.addTests([cls(name, param=param) for param in params])
-          return suite
-
-Adapted from `Eli Bendersky's website <http://eli.thegreenplace.net/2011/08/02/python-unit-testing-parametrized-test-cases/>`_.
+  - Advertise the failed test parameters.
+  - Limitation: Stop at the first failure.
 
 ------
 
@@ -688,7 +603,7 @@ Need to separate (possibly huge) test data from python package.
 
 Download test data and store it in a temporary directory during the tests if not available.
 
-Example: `fabio <https://github.com/kif/fabio>`_/test/utilstest.py
+Example: `pyFAI <https://github.com/kif/pyFAI>`_/test/utilstest.py
 
 ------
 
@@ -699,4 +614,4 @@ Sum-up
 
 - Write tests: ``TestCase``
 - Chain tests: ``TestSuite``, explicit to automatic
-- Run tests: ``main``, command line, script, ``coverage``
+- Run tests: ``main``, command line, script
