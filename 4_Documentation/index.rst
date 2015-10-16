@@ -55,12 +55,14 @@ What is this function doing?
 .. code-block:: python
 
    def is_power_of_two(value):
+       """Returns True if value is a power of two.
+
+       It supports numpy array of int of any dimensions and returns
+       an array of bool of same dimensions.
+
+       Limitation: Returns True for 0.
+       """
        return (value & (value - 1)) == 0
-
-Better but still missing some information:
-
-- Limitation: This function returns True for 0
-- It supports numpy array of int of any dimension as input
 
 ------
 

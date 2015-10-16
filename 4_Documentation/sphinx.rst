@@ -180,17 +180,21 @@ Info field list
 
 .. code-block:: python
 
-   def xorshift32(x, shift_triple=(13, 17, 5)):
+   def random_xorshift32(last_value, shift_triple=(13, 17, 5)):
        """32 bits pseudo-random generator.
 
-       :param numpy.uint32 x: The previous pseudo-random number or the seed.
+       :param numpy.uint32 last_value: Previously returned number or the seed.
        :param shift_triple: Bit shifts to use.
        :type shift_triple: 3-tuple of int
        :return: The generated random number.
        :rtype: numpy.uint32
        :raises ValueError: if x is not a numpy.uint32
        """
-       ...
+       x = numpy.uint32(last_value)  # Work with 32bits unsigned integer
+       x ^= numpy.uint32(last_value) << shift_triple[0]
+       x ^= x >> shift_triple[1]
+       x ^= x << shift_triple[2]
+       return x
 
 Alternative syntax: Sphinx extension `Napoleon <http://sphinxcontrib-napoleon.readthedocs.org>`_
 
